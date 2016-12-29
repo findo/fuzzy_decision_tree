@@ -78,6 +78,51 @@ class FuzzyDecisionTable(object):
         sets = dfs(set_matrix)
         return sets
 
+    # some_set: integer set
+    def get_mid_point(self,some_set):
+        MIN = 1e9
+        n =  len(some_set)
+        for i in range(0,n):
+            temp = 0
+            # 计算some_set[i]和剩余的点的模糊相似关系的和
+            for j in range(0,n):
+                if i != j:
+                    temp += self.f(self.table[some_set[i]],self.table[some_set[j]])
+                
+            if temp < MIN:
+                MIN = temp
+                min_point = some_set[i]
+        return min_point
+
+    # 生成每个集合的中心点
+    def get_mid_points(self):
+        sets = self.get_set()
+        self.sets = sets
+        n = len(sets) # n 个聚类
+        ret = [] # store the indexs of data 
+        for s in sets:
+            ret.append(self.get_mid_point(s))
+        return ret
+    # 计算每项与聚类的得到的集合的隶属度
+    # 返回类型为[[],[],[]] def li_shu_du(self):
+        mid_points = self.get_mid_points()
+        num_of_sets = len(mid_points) # 集合个数
+        ret = []
+        for i in range(self.table.shape[0]):
+            # i is the index
+            # 分别计算隶属度
+            li_shu_du_temp = []
+            for index in range(num_of_sets):
+                if i == mid_points[index]:
+                    # 若i是中心\
+                    li_shu_du_temp[index] = 1
+                else:
+                    li_shu_du_temp[index] = self.f(self.table[mid_points[index]],self.table[i])
+            ret.append(li_shu_du_temp)
+        return ret
+
+
+
 if __name__ == '__main__':
     iris = load_iris()
     fdt = FuzzyDecisionTable(iris.data[0:4])

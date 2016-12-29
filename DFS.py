@@ -13,7 +13,8 @@ def dfs_once(G,s,visited_nodes):
     for i in range(n):
         if G[i][s] == 1 and visited[i] == 0:
             dfs_once(G,i,visited_nodes)
-
+    return
+    
 def dfs(G):
     #count = 0
     n = G.shape[0] # 顶点个数
